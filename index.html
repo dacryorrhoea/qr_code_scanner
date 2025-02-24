@@ -25,6 +25,12 @@
             Telegram.WebApp.close();
         }
 
+        const videoElement = document.querySelector("video");
+        if (videoElement) {
+            videoElement.setAttribute("autoplay", "");
+            videoElement.setAttribute("playsinline", "");
+        }
+        
         let qrScanner = new Html5Qrcode("reader");
         qrScanner.start(
             { video: { facingMode: { exact: "environment" } } },
