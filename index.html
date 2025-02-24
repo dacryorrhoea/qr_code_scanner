@@ -27,10 +27,12 @@
 
         let qrScanner = new Html5Qrcode("reader");
         qrScanner.start(
-            { facingMode: "environment" },
+            { video: { facingMode: { exact: "environment" } } },
             { fps: 10, qrbox: { width: 250, height: 250 } },
             onScanSuccess
-        );
+        ).catch(err => {
+            console.error("❌ Ошибка при запуске QR-сканера:", err);
+        });
 
         function closeWebApp() {
             Telegram.WebApp.close();
