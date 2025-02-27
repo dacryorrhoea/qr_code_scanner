@@ -30,6 +30,22 @@
             Telegram.WebApp.close();
         }
 
+        // Запуск QR-сканера в Telegram WebApp
+        function startQrScanner() {
+            let qrScanner = new Html5Qrcode("reader");
+            qrScanner.start(
+                { facingMode: "environment" },  // Камера для сканирования
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                onScanSuccess
+            ).catch(err => console.error("❌ Ошибка QR-сканера:", err));
+        }
+
+        // Начинаем сканирование
+        startQrScanner();
+
         const videoElement = document.querySelector("video");
         if (videoElement) {
             videoElement.setAttribute("autoplay", "");
@@ -41,16 +57,6 @@
         } else {
             console.log("✅ Html5Qrcode загружен!");
         }
-
-        let qrScanner = new Html5Qrcode("reader");
-        qrScanner.start(
-            { facingMode: "environment" },  // ✅ Исправленный формат
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
-            onScanSuccess
-        ).catch(err => console.error("❌ Ошибка QR-сканера:", err));
 
         function closeWebApp() {
             Telegram.WebApp.close();
