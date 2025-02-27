@@ -4,31 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Scanner для Telegram MiniApp</title>
-    <script type="module">
-        import { initQRScanner, isTelegramWebApp } from 'https://cdn.jsdelivr.net/npm/@telegram-apps/sdk@latest/dist/telegram-apps-sdk.esm.js';
-        
-        document.addEventListener("DOMContentLoaded", () => {
-            if (!isTelegramWebApp()) {
-                console.error("Этот код должен выполняться внутри Telegram Mini App");
-                document.getElementById("result").textContent = "Ошибка: Запустите в Telegram Mini App";
-                return;
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const script = document.createElement("script");
+                script.src = "https://cdn.jsdelivr.net/npm/@telegram-apps/sdk@latest/dist/telegram-apps-sdk.umd.js";
+                script.onload = async () => {
+                    if (!window.TelegramApps) {
+                        console.error("Telegram SDK не загружен");
+                        return;
+                    }
+                    
+                    const { initQRScanner, isTelegramWebApp } = window.TelegramApps;
+                    
+                    if (!isTelegramWebApp()) {
+                        console.error("Этот код должен выполняться внутри Telegram Mini App");
+                        document.getElementById("result").textContent = "Ошибка: Запустите в Telegram Mini App";
+                        return;
+                    }
+
+                    const qrScanner = initQRScanner();
+                    const scanButton = document.getElementById("scanButton");
+                    const resultDiv = document.getElementById("result");
+
+                    scanButton.addEventListener("click", async () => {
+                        try {
+                            console.log("Запуск сканирования...");
+                            const qrCode = await qrScanner.scan();
+                            console.log("QR код получен:", qrCode);
+                            resultDiv.textContent = "QR код: " + qrCode;
+                        } catch (error) {
+                            console.error("Ошибка при сканировании:", error);
+                            resultDiv.textContent = "Ошибка: " + error.message;
+                        }
+                    });
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                console.error("Ошибка загрузки SDK:", error);
             }
-            
-            const qrScanner = initQRScanner();
-            const scanButton = document.getElementById("scanButton");
-            const resultDiv = document.getElementById("result");
-            
-            scanButton.addEventListener("click", async () => {
-                try {
-                    console.log("Запуск сканирования...");
-                    const qrCode = await qrScanner.scan();
-                    console.log("QR код получен:", qrCode);
-                    resultDiv.textContent = "QR код: " + qrCode;
-                } catch (error) {
-                    console.error("Ошибка при сканировании:", error);
-                    resultDiv.textContent = "Ошибка: " + error.message;
-                }
-            });
         });
     </script>
 </head>
