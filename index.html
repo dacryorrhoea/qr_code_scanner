@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Scanner</title>
     <script src="https://telegram.org/js/telegram-mini-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tma.js/sdk@latest"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
         body { margin: 0; background: black; color: white; overflow: hidden; }
         #qr-reader { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
@@ -15,23 +15,37 @@
     <div id="qr-reader"></div>
     
     <script>
-        import { QrScanner } from '@tma.js/sdk';
+        const tg = window.Telegram.WebApp;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            tg.expand(); // Разворачиваем WebApp на весь экран
+            startQRScanner();
+        });
         
-        const tg = window.Telegram.MiniApp;
-        tg.ready();
-        
-        async function startScanner() {
-            try {
-                const scanner = new QrScanner();
-                const result = await scanner.scan();
-                tg.sendData(result);
-                tg.close();
-            } catch (error) {
-                console.error('QR Scan failed', error);
+        function startQRScanner() {
+            if (tg.isVersionAtLeast("6.0")) { // Проверяем поддержку QR-сканера
+                const qrCodeScanner = new Html5Qrcode("qr-reader");
+                qrCodeScanner.start(
+                    { facingMode: "environment" }, // Использование задней камеры
+                    {
+                        fps: 10, // Частота кадров
+                        qrbox: 250, // Размер области для сканирования
+                    },
+                    (decodedText) => {
+                        tg.sendData(decodedText); // Отправляем данные обратно в Telegram
+                        tg.close(); // Закрываем Mini App
+                    },
+                    (errorMessage) => {
+                        // Можно обработать ошибку, если QR не распознан
+                    }
+                ).catch(err => {
+                    console.error("Ошибка сканирования QR-кода:", err);
+                    alert("Ошибка при запуске сканера QR-кодов");
+                });
+            } else {
+                alert("Ваш клиент Telegram не поддерживает сканирование QR-кодов");
             }
         }
-        
-        startScanner();
     </script>
 </body>
 </html>
