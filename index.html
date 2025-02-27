@@ -39,19 +39,22 @@
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
                 const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
                 
                 if (code) {
+                    console.log("QR Code detected:", code.data);
                     scannedData = code.data;
                     Telegram.WebApp.sendData(scannedData);
                     Telegram.WebApp.close();
+                } else {
+                    console.log("No QR Code detected.");
                 }
             }
-            requestAnimationFrame(scanQR);
         }
         
-        video.addEventListener('loadeddata', scanQR);
+        setInterval(scanQR, 500);
     </script>
 </body>
 </html>
