@@ -1,44 +1,33 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Scanner для Telegram MiniApp</title>
-    <script type="module">
-        import { qrScanner } from 'https://cdn.jsdelivr.net/npm/@telegram-apps/sdk@latest/dist/telegram-apps-sdk.esm.js';
-        
-        document.addEventListener("DOMContentLoaded", async () => {
-            const scanButton = document.getElementById("scanButton");
-            const resultDiv = document.getElementById("result");
-
-            if (qrScanner.open.isAvailable()) {
-                scanButton.addEventListener("click", async () => {
-                    try {
-                        console.log("Запуск сканирования...");
-                        const promise = qrScanner.open({
-                            text: "Scan the QR",
-                            onCaptured(qr) {
-                                console.log("QR код получен:", qr);
-                                resultDiv.textContent = "QR код: " + qr;
-                                qrScanner.close();
-                            },
-                        });
-                        await promise;
-                    } catch (error) {
-                        console.error("Ошибка при сканировании:", error);
-                        resultDiv.textContent = "Ошибка: " + error.message;
-                    }
-                });
-            } else {
-                console.error("QR Scanner недоступен");
-                resultDiv.textContent = "Ошибка: QR Scanner недоступен";
-            }
-        });
-    </script>
+    <title>QR Scanner</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { text-align: center; background: #1e1e1e; color: white; }
+        #qr-reader { width: 100%; max-width: 400px; margin: auto; }
+    </style>
 </head>
 <body>
-    <h1>QR Scanner для Telegram MiniApp</h1>
-    <button id="scanButton">Сканировать QR-код</button>
-    <p id="result"></p>
+    <h2>Scan QR Code</h2>
+    <div id="qr-reader"></div>
+    
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        function onScanSuccess(decodedText, decodedResult) {
+            tg.sendData(decodedText);
+            tg.close();
+        }
+        
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 }
+        );
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
 </body>
 </html>
