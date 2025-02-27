@@ -27,26 +27,28 @@
         const resultElement = document.getElementById('result');
         let scannedData = '';
         
-        function requestCameraPermission() {
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then(stream => {
-                    video.srcObject = stream;
-                    localStorage.setItem("cameraPermissionGranted", "true");
-                })
-                .catch(err => console.error('Camera access denied:', err));
+        async function startCamera() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const hasCamera = devices.some(device => device.kind === 'videoinput');
+                if (!hasCamera) {
+                    console.error('No camera found');
+                    return;
+                }
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = stream;
+                video.play();
+            } catch (err) {
+                console.error('Camera access denied:', err);
+            }
         }
-
-        function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => { video.srcObject = stream; })
-                .catch(err => console.error('Camera error:', err));
-        }
-
+        
         navigator.permissions.query({ name: 'camera' }).then(permission => {
             if (permission.state === 'granted') {
                 startCamera();
             } else if (permission.state === 'prompt') {
-                requestCameraPermission();
+                startCamera();
             }
         });
         
