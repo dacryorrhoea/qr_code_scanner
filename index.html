@@ -1,54 +1,61 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сканер QR-кодов</title>
+    <title>QR Code Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         body { text-align: center; font-family: Arial, sans-serif; }
-        #reader { width: 300px; margin: auto; }
-        button { padding: 10px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        video { width: 100%; max-width: 400px; }
+        canvas { display: none; }
+        button { margin-top: 10px; padding: 10px; font-size: 16px; }
     </style>
 </head>
 <body>
-    <h2>Сканируй QR-код</h2>
-    <div id="reader"></div>
-    <button onclick="closeWebApp()">Закрыть</button>
+    <h2>Scan QR Code</h2>
+    <video id="camera" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <p id="result">Waiting for scan...</p>
+    <button onclick="sendResult()">Send to Bot</button>
 
     <script>
-        Telegram.WebApp.expand();
-
-        function onScanSuccess(decodedText, decodedResult) {
-            Telegram.WebApp.sendData(decodedText);
-            Telegram.WebApp.close();
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const resultElement = document.getElementById('result');
+        let scannedData = '';
+        
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => console.error('Camera access denied:', err));
+        
+        function scanQR() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    scannedData = code.data;
+                    resultElement.innerText = `QR Code: ${scannedData}`;
+                }
+            }
+            requestAnimationFrame(scanQR);
         }
+        
+        video.addEventListener('play', scanQR);
 
-        const videoElement = document.querySelector("video");
-        if (videoElement) {
-            videoElement.setAttribute("autoplay", "");
-            videoElement.setAttribute("playsinline", "");
-        }
-
-        if (typeof Html5Qrcode === "undefined") {
-            console.error("❌ Html5Qrcode не загружен!");
-        } else {
-            console.log("✅ Html5Qrcode загружен!");
-        }
-
-        let qrScanner = new Html5Qrcode("reader");
-        qrScanner.start(
-            { facingMode: "environment" },  // ✅ Исправленный формат
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
-            onScanSuccess
-        ).catch(err => console.error("❌ Ошибка QR-сканера:", err));
-
-        function closeWebApp() {
-            Telegram.WebApp.close();
+        function sendResult() {
+            if (scannedData) {
+                Telegram.WebApp.sendData(scannedData);
+                Telegram.WebApp.close();
+            } else {
+                alert('No QR code detected!');
+            }
         }
     </script>
 </body>
