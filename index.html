@@ -7,12 +7,11 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        body { text-align: center; background: #1e1e1e; color: white; }
-        #qr-reader { width: 100%; max-width: 400px; margin: auto; }
+        body { margin: 0; background: black; color: white; overflow: hidden; }
+        #qr-reader { width: 100vw; height: 100vh; }
     </style>
 </head>
 <body>
-    <h2>Scan QR Code</h2>
     <div id="qr-reader"></div>
     
     <script>
@@ -24,10 +23,13 @@
             tg.close();
         }
         
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader", { fps: 10, qrbox: 250 }
-        );
-        html5QrcodeScanner.render(onScanSuccess);
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                let cameraId = devices[0].id;
+                let qrScanner = new Html5Qrcode("qr-reader");
+                qrScanner.start(cameraId, { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight } }, onScanSuccess);
+            }
+        }).catch(err => console.error(err));
     </script>
 </body>
 </html>
