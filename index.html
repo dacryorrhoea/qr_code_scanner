@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <video id="camera" autoplay playsinline></video>
+    <video id="camera" autoplay playsinline muted></video>
     <canvas id="canvas"></canvas>
 
     <script>
@@ -26,24 +26,13 @@
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
                 video.srcObject = stream;
-                video.play();
+                setTimeout(() => video.play(), 500);
             } catch (err) {
                 console.error("Camera access denied:", err);
             }
         }
         
-        async function checkCameraPermissions() {
-            try {
-                const permissionStatus = await navigator.permissions.query({ name: 'camera' });
-                if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
-                    startCamera();
-                }
-            } catch (err) {
-                startCamera();
-            }
-        }
-        
-        checkCameraPermissions();
+        startCamera();
         
         function scanQR() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -62,7 +51,7 @@
             requestAnimationFrame(scanQR);
         }
         
-        video.addEventListener('play', scanQR);
+        video.addEventListener('loadeddata', scanQR);
     </script>
 </body>
 </html>
