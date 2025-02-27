@@ -25,6 +25,8 @@
         function startQRScanner() {
             if (tg.isVersionAtLeast("6.0")) { // Проверяем поддержку QR-сканера
                 const qrCodeScanner = new Html5Qrcode("qr-reader");
+                
+                // Попробуем инициализировать камеру
                 qrCodeScanner.start(
                     { facingMode: "environment" }, // Использование задней камеры
                     {
@@ -36,11 +38,12 @@
                         tg.close(); // Закрываем Mini App
                     },
                     (errorMessage) => {
-                        // Можно обработать ошибку, если QR не распознан
+                        // Можем добавить обработку ошибок, например, выводить сообщение
+                        console.error("Ошибка при сканировании QR-кода:", errorMessage);
                     }
                 ).catch(err => {
-                    console.error("Ошибка сканирования QR-кода:", err);
-                    alert("Ошибка при запуске сканера QR-кодов");
+                    console.error("Ошибка при запуске сканера QR-кодов:", err);
+                    alert("Ошибка при запуске сканера QR-кодов. Пожалуйста, убедитесь, что у вас есть доступ к камере.");
                 });
             } else {
                 alert("Ваш клиент Telegram не поддерживает сканирование QR-кодов");
