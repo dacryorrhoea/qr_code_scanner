@@ -15,7 +15,7 @@
 </head>
 <body>
     <h2>Scan QR Code</h2>
-    <video id="camera" autoplay></video>
+    <video id="camera" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
     <p id="result">Waiting for scan...</p>
     <button onclick="sendResult()">Send to Bot</button>
@@ -29,28 +29,33 @@
         
         async function startCamera() {
             try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const hasCamera = devices.some(device => device.kind === 'videoinput');
-                if (!hasCamera) {
-                    console.error('No camera found');
-                    return;
-                }
-                
+                console.log("Requesting camera access...");
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
                 video.srcObject = stream;
                 video.play();
+                console.log("Camera started successfully");
             } catch (err) {
-                console.error('Camera access denied:', err);
+                console.error("Camera access denied:", err);
+                resultElement.innerText = "Camera access denied. Please allow camera access.";
             }
         }
         
-        navigator.permissions.query({ name: 'camera' }).then(permission => {
-            if (permission.state === 'granted') {
-                startCamera();
-            } else if (permission.state === 'prompt') {
+        async function checkCameraPermissions() {
+            try {
+                const permissionStatus = await navigator.permissions.query({ name: 'camera' });
+                console.log("Camera permission state:", permissionStatus.state);
+                if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
+                    startCamera();
+                } else {
+                    resultElement.innerText = "Camera permission denied. Please enable it in browser settings.";
+                }
+            } catch (err) {
+                console.warn("Permissions API not supported, trying camera directly.");
                 startCamera();
             }
-        });
+        }
+        
+        checkCameraPermissions();
         
         function scanQR() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
