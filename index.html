@@ -27,9 +27,28 @@
         const resultElement = document.getElementById('result');
         let scannedData = '';
         
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(stream => { video.srcObject = stream; })
-            .catch(err => console.error('Camera access denied:', err));
+        function requestCameraPermission() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    localStorage.setItem("cameraPermissionGranted", "true");
+                })
+                .catch(err => console.error('Camera access denied:', err));
+        }
+
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => { video.srcObject = stream; })
+                .catch(err => console.error('Camera error:', err));
+        }
+
+        navigator.permissions.query({ name: 'camera' }).then(permission => {
+            if (permission.state === 'granted') {
+                startCamera();
+            } else if (permission.state === 'prompt') {
+                requestCameraPermission();
+            }
+        });
         
         function scanQR() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
