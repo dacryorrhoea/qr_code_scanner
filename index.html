@@ -4,32 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Scanner</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://telegram.org/js/telegram-mini-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tma.js/sdk@latest"></script>
     <style>
         body { margin: 0; background: black; color: white; overflow: hidden; }
-        #qr-reader { width: 100vw; height: 100vh; }
+        #qr-reader { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
     <div id="qr-reader"></div>
     
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        import { QrScanner } from '@tma.js/sdk';
         
-        function onScanSuccess(decodedText, decodedResult) {
-            tg.sendData(decodedText);
-            tg.close();
+        const tg = window.Telegram.MiniApp;
+        tg.ready();
+        
+        async function startScanner() {
+            try {
+                const scanner = new QrScanner();
+                const result = await scanner.scan();
+                tg.sendData(result);
+                tg.close();
+            } catch (error) {
+                console.error('QR Scan failed', error);
+            }
         }
         
-        Html5Qrcode.getCameras().then(devices => {
-            if (devices && devices.length) {
-                let cameraId = devices[0].id;
-                let qrScanner = new Html5Qrcode("qr-reader");
-                qrScanner.start(cameraId, { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight } }, onScanSuccess);
-            }
-        }).catch(err => console.error(err));
+        startScanner();
     </script>
 </body>
 </html>
