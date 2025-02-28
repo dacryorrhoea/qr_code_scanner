@@ -54,7 +54,6 @@ export default {
     }
     if (this.is_telegram_client && this.is_telegram_api_updated) {
       this.TMA.MainButton.show();
-      this.loadStorage();
     }
   },
   mounted() {
@@ -134,7 +133,7 @@ export default {
     showQRScanner() {
       // Sets QR message
       let par = {
-        text: "хуй"
+        text: ""
       };
       this.TMA.showScanQrPopup(par);
     },
