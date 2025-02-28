@@ -89,6 +89,18 @@ export default {
       this.enrichValues(data);
     },
     
+    // Удаление ключа из облачного хранилища
+    removeKey(key) {
+      for (let index = 0; index < this.cloud_storage_keys.length; index++) {
+        if (this.cloud_storage_keys[index] === key) {
+          this.cloud_storage_keys.splice(index, 1);
+          delete this.cloud_storage_values[key];
+          break;
+        }
+      }
+      this.TMA.CloudStorage.removeItem(key);
+    },
+    
     // Обогащение значения QR-кода доп. информацией
     enrichValue(key) {
       this.enriched_values[key] = {};
@@ -114,16 +126,29 @@ export default {
       }
     },
     
+    // Добавление QR-кода в облачное хранилище
+    addToStorage(value) {
+      const timestamp = new Date().getTime();
+      this.TMA.CloudStorage.setItem(timestamp, value);
+      this.cloud_storage_keys.unshift(timestamp.toString());
+      this.cloud_storage_values[timestamp] = value;
+      return timestamp;
+    },
+    
     // Обработка полученного QR-кода
     processQRCode(data) {
       if (data.data.length > 4096) {
         this.TMA.showAlert('Ошибка: QR-код слишком длинный');
         return;
       }
-  
+      if (data.data == this.last_code) {
+        return;
+      }
+      
       this.hapticImpact();
 
       this.TMA.sendData(data.data); // Отправка данных в Telegram-бот
+
       this.TMA.closeScanQrPopup();
       this.TMA.close(); // Закрытие мини-приложения
     },
