@@ -132,13 +132,6 @@ export default {
     },
     // QR scanner functions
     showQRScanner() {
-      // Sets QR message
-      let par = {
-        text: ""
-      };
-      if (this.is_continuous_scan) {
-        par['text'] = "Continuous scan enabled.";
-      }
       this.TMA.showScanQrPopup(par);
     },
     processQRCode(data) {
