@@ -30,6 +30,7 @@ export default {
     if (this.TMA.platform != "unknown") {
       this.is_telegram_client = true;
     }
+  
     if (this.is_telegram_client && this.is_telegram_api_updated) {
       this.TMA.MainButton.show();
     }
@@ -42,11 +43,7 @@ export default {
       this.showQRScanner();
     },
     showQRScanner() {
-      // Sets QR message
-      let par = {
-        text: ""
-      };
-      this.TMA.showScanQrPopup(par);
+      this.TMA.showScanQrPopup({text: ""});
     },
     processQRCode(data) {
       if (data.data.length > 4096) {
