@@ -61,28 +61,6 @@ export default {
     this.TMA.ready();
   },
   methods: {
-    // Cloud Storage methods
-    loadStorage() {
-      this.TMA.CloudStorage.getKeys(this.processKeys);
-    },
-    processKeys(error, data) {
-      if (error) {
-        this.TMA.showAlert(error);
-        return;
-      }
-      //sort timestamps in descending order
-      data.sort((a, b) => b - a);
-      this.cloud_storage_keys = data;
-      this.TMA.CloudStorage.getItems(data, this.processItems);
-    },
-    processItems(error, data) {
-      if (error) {
-        this.TMA.showAlert(error);
-        return;
-      }
-      this.cloud_storage_values = data;
-      this.enrichValues(data);
-    },
     removeKey(key) {
       //TODO clean the enriched_values
       for (var index = 0; index < this.cloud_storage_keys.length; index++) {
