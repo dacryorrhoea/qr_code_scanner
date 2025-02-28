@@ -5,11 +5,6 @@
       class="mx-auto"
       max-width="600"
     >
-      <AppMenu 
-        @show-qr-scanner="showQRScanner()"  
-        @show-history="show_history = true"
-        @show-settings="show_history = false"          
-      />
       <!--history-->
       <v-card 
         v-if="show_history"
@@ -112,7 +107,6 @@
 
 <script>
 import { detectCodeType, prepareUrl, prepareCoordinate, prepareWifi, prepareVCard } from './helpers';
-import AppMenu from "./components/AppMenu.vue";
 import AppSettings from "./components/AppSettings.vue"
 import CardUrl from "./components/CardUrl.vue";
 import CardGeo from "./components/CardGeo.vue";
@@ -123,7 +117,6 @@ import RequirementsMessage from './components/RequirementsMessage.vue';
 
 export default {
   components: {
-    AppMenu,
     AppSettings,
     CardUrl,
     CardGeo,
