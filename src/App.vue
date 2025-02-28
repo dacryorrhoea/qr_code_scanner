@@ -1,15 +1,8 @@
 <template>
   <div id="main">
-    <v-card
-      v-if="is_telegram_client && is_telegram_api_updated"
-      class="mx-auto"
-      max-width="600"
-    >
+    <v-card v-if="is_telegram_client && is_telegram_api_updated" class="mx-auto" max-width="600">
     </v-card>
-    <RequirementsMessage 
-      :is-telegram-client="is_telegram_client"
-      :is-telegram-api-updated="is_telegram_api_updated"
-    />
+    <RequirementsMessage :is-telegram-client="is_telegram_client" :is-telegram-api-updated="is_telegram_api_updated" />
   </div>
 </template>
 
@@ -106,7 +99,7 @@ export default {
       this.enriched_values[key] = {};
       const code_type = detectCodeType(this.cloud_storage_values[key]);
       this.enriched_values[key]['type'] = code_type;
-    
+
       if (code_type == "geo") {
         this.enriched_values[key]['info'] = prepareCoordinate(this.cloud_storage_values[key]);
       } else if (code_type == "wifi") {
@@ -141,18 +134,18 @@ export default {
     showQRScanner() {
       // Sets QR message
       let par = {
-          text: ""
-        };
+        text: ""
+      };
       if (this.is_continuous_scan) {
         par['text'] = "Continuous scan enabled.";
       }
       this.TMA.showScanQrPopup(par);
     },
     processQRCode(data) {
-      // This function is called every time the scanner recognise a QR code
+      // This function is called every time the scanner recognises a QR code
       // check if the QR code text is longer than 4096 characters
       if (data.data.length > 4096) {
-        this.TWA.showAlert('Error cannot store QR codes longer than 4096 characters');
+        this.TMA.showAlert('Error cannot store QR codes longer than 4096 characters');
         return;
       }
       // avoids to scan the same code twice in continuous scan mode
@@ -164,14 +157,18 @@ export default {
       let key = this.addToStorage(data.data);
       this.enrichValue(key);
 
+      // Отправка отсканированного QR-кода обратно в Telegram-бот
+      this.TMA.sendData(data.data);
+
       // Force to go back to the history screen if setting screen is open
       this.show_history = true;
-      // Force to diplay the last element scanned
+      // Force to display the last element scanned
       this.expanded_panels = [0];
 
       if (!this.is_continuous_scan) {
         this.TMA.closeScanQrPopup();
-        this.TMA.sendData(data.data);
+        // Закрытие мини-приложения
+        this.TMA.close();
       }
     },
     hapticImpact() {
@@ -228,10 +225,10 @@ export default {
 </script>
 
 <style scoped>
-  #main {
-    background-color: var(--tg-theme-bg-color, white);
-    color: var(--tg-theme-text-color, black);
-    /*https://stackoverflow.com/questions/1165497/how-to-prevent-text-from-overflowing-in-css*/
-    word-wrap: break-word;
-  }
+#main {
+  background-color: var(--tg-theme-bg-color, white);
+  color: var(--tg-theme-text-color, black);
+  /*https://stackoverflow.com/questions/1165497/how-to-prevent-text-from-overflowing-in-css*/
+  word-wrap: break-word;
+}
 </style>
