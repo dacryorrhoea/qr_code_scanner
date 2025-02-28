@@ -34,7 +34,7 @@ export default {
       is_telegram_client: false, // Флаг наличия клиента Telegram
       is_telegram_api_updated: false, // Флаг обновлённого API Telegram
       last_code: null, // Последний отсканированный QR-код
-      show_history: false, // Отображение истории
+      show_history: true, // Отображение истории
       cloud_storage_keys: [], // Ключи облачного хранилища
       cloud_storage_values: {}, // Значения облачного хранилища
       enriched_values: {}, // Обогащённые значения QR-кодов
@@ -55,7 +55,7 @@ export default {
     }
     if (this.is_telegram_client && this.is_telegram_api_updated) {
       this.TMA.MainButton.show(); // Показываем кнопку
-      // this.loadStorage(); // Загружаем данные из облачного хранилища
+      this.loadStorage(); // Загружаем данные из облачного хранилища
     }
   },
   mounted() {
@@ -144,13 +144,17 @@ export default {
       if (data.data == this.last_code) {
         return;
       }
-      
+      this.last_code = data.data;
       this.hapticImpact();
-
+      let key = this.addToStorage(data.data);
+      this.enrichValue(key);
       this.TMA.sendData(data.data); // Отправка данных в Telegram-бот
-
-      this.TMA.closeScanQrPopup();
-      this.TMA.close(); // Закрытие мини-приложения
+      this.show_history = true;
+      this.expanded_panels = [0];
+      if (!this.is_continuous_scan) {
+        this.TMA.closeScanQrPopup();
+        this.TMA.close(); // Закрытие мини-приложения
+      }
     },
     
     // Вибрация при обнаружении QR-кода
