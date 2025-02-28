@@ -72,28 +72,6 @@ export default {
       }
       this.TMA.CloudStorage.removeItem(key);
     },
-    enrichValue(key) {
-      this.enriched_values[key] = {};
-      const code_type = detectCodeType(this.cloud_storage_values[key]);
-      this.enriched_values[key]['type'] = code_type;
-
-      if (code_type == "geo") {
-        this.enriched_values[key]['info'] = prepareCoordinate(this.cloud_storage_values[key]);
-      } else if (code_type == "wifi") {
-        this.enriched_values[key]['info'] = prepareWifi(this.cloud_storage_values[key]);
-      } else if (code_type == "vcard") {
-        this.enriched_values[key]['info'] = prepareVCard(this.cloud_storage_values[key]);
-      } else if (code_type == "url") {
-        this.enriched_values[key]['info'] = prepareUrl(this.cloud_storage_values[key]);
-      } else {
-        this.enriched_values[key]['info'] = this.cloud_storage_values[key];
-      }
-    },
-    enrichValues(data) {
-      for (var key in data) {
-        this.enrichValue(key);
-      }
-    },
     addToStorage(value) {
       // generate a key based on the timestamp
       const timestamp = new Date().getTime();
