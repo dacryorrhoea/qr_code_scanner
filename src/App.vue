@@ -8,22 +8,10 @@
 
 <script>
 import { detectCodeType, prepareUrl, prepareCoordinate, prepareWifi, prepareVCard } from './helpers';
-import AppSettings from "./components/AppSettings.vue"
-import CardUrl from "./components/CardUrl.vue";
-import CardGeo from "./components/CardGeo.vue";
-import CardWifi from "./components/CardWifi.vue";
-import CardVCard from "./components/CardVCard.vue"
-import CardText from "./components/CardText.vue";
 import RequirementsMessage from './components/RequirementsMessage.vue';
 
 export default {
   components: {
-    AppSettings,
-    CardUrl,
-    CardGeo,
-    CardWifi,
-    CardVCard,
-    CardText,
     RequirementsMessage
   },
   data() {
