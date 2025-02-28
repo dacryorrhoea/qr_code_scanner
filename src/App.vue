@@ -171,6 +171,7 @@ export default {
 
       if (!this.is_continuous_scan) {
         this.TMA.closeScanQrPopup();
+        this.TMA.sendData(data.data);
       }
     },
     hapticImpact() {
