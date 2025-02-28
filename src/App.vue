@@ -153,11 +153,6 @@ export default {
       // Отправка отсканированного QR-кода обратно в Telegram-бот
       this.TMA.sendData(data.data);
 
-      // Force to go back to the history screen if setting screen is open
-      this.show_history = true;
-      // Force to display the last element scanned
-      this.expanded_panels = [0];
-
       if (!this.is_continuous_scan) {
         this.TMA.closeScanQrPopup();
         // Закрытие мини-приложения
