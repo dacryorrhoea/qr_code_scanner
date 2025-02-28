@@ -132,7 +132,11 @@ export default {
     },
     // QR scanner functions
     showQRScanner() {
-      this.TMA.showScanQrPopup();
+      // Sets QR message
+      let par = {
+        text: "хуй"
+      };
+      this.TMA.showScanQrPopup(par);
     },
     processQRCode(data) {
       if (data.data.length > 4096) {
