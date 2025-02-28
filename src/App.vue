@@ -149,8 +149,6 @@ export default {
         return;
       }
       this.hapticImpact();
-      let key = this.addToStorage(data.data);
-      this.enrichValue(key);
 
       // Отправка отсканированного QR-кода обратно в Telegram-бот
       this.TMA.sendData(data.data);
