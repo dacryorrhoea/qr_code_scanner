@@ -148,11 +148,6 @@ export default {
         this.TMA.showAlert('Error cannot store QR codes longer than 4096 characters');
         return;
       }
-      // avoids to scan the same code twice in continuous scan mode
-      if (data.data == this.last_code) {
-        return;
-      }
-      this.last_code = data.data;
       this.hapticImpact();
       let key = this.addToStorage(data.data);
       this.enrichValue(key);
