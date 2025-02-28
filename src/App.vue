@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import { detectCodeType, prepareUrl, prepareCoordinate, prepareWifi, prepareVCard } from './helpers';
 import RequirementsMessage from './components/RequirementsMessage.vue';
 
 export default {
