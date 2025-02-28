@@ -30,15 +30,6 @@ export default {
     return {
       is_telegram_client: false,
       is_telegram_api_updated: false,
-      last_code: null,
-      show_history: true,
-      // Cloud storage
-      cloud_storage_keys: [],
-      cloud_storage_values: {},
-      enriched_values: {},
-      is_continuous_scan: false,
-      // Set the first element to expanded by default
-      expanded_panels: [0],
     };
   },
   created() {
@@ -57,7 +48,6 @@ export default {
     }
   },
   mounted() {
-    // Mini app ready
     this.TMA.ready();
   },
   methods: {
@@ -87,12 +77,6 @@ export default {
       // makes the phone vibrate when QR is detected
       this.TMA.HapticFeedback.impactOccurred("rigid");
       this.TMA.HapticFeedback.impactOccurred("heavy");
-    },
-    limitLength(value, max_length) {
-      if (value.length <= max_length) {
-        return value;
-      }
-      return value.substring(0, max_length) + "...";
     }
   }
 }
