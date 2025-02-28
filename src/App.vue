@@ -20,27 +20,38 @@ export default {
     };
   },
   created() {
-    // Проверяем, является ли клиент Telegram
+    // Binding function to the events types
+    this.TMA.MainButton.setText("Scan QR code");
+    this.TMA.onEvent('qrTextReceived', this.processQRCode);
+    this.TMA.onEvent('mainButtonClicked', this.mainButtonClicked);
+
+    // platform not updated if version is not 6.9 or greater
     this.is_telegram_api_updated = this.TMA.isVersionAtLeast('6.9');
-    if (this.TMA.platform !== "unknown") {
+    if (this.TMA.platform != "unknown") {
       this.is_telegram_client = true;
+    }
+  
+    if (this.is_telegram_client && this.is_telegram_api_updated) {
+      this.TMA.MainButton.show();
     }
   },
   mounted() {
     this.TMA.ready();
 
-    // Если Telegram-клиент поддерживает API, сразу открываем сканнер
     if (this.is_telegram_client && this.is_telegram_api_updated) {
       this.showQRScanner();
     }
   },
   methods: {
+    mainButtonClicked() {
+      this.showQRScanner();
+    },
     showQRScanner() {
-      this.TMA.showScanQrPopup({ text: "" });
+      this.TMA.showScanQrPopup({text: ""});
     },
     processQRCode(data) {
       if (data.data.length > 4096) {
-        this.TMA.showAlert('Error: QR code too long (max 4096 characters)');
+        this.TMA.showAlert('Error cannot store QR codes longer than 4096 characters');
         return;
       }
       this.hapticImpact();
@@ -49,6 +60,7 @@ export default {
       this.TMA.close();
     },
     hapticImpact() {
+      // makes the phone vibrate when QR is detected
       this.TMA.HapticFeedback.impactOccurred("rigid");
       this.TMA.HapticFeedback.impactOccurred("heavy");
     }
