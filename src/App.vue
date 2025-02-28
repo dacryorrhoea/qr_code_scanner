@@ -132,17 +132,44 @@ export default {
     },
     // QR scanner functions
     showQRScanner() {
+      // Sets QR message
+      let par = {
+        text: ""
+      };
+      if (this.is_continuous_scan) {
+        par['text'] = "Continuous scan enabled.";
+      }
       this.TMA.showScanQrPopup(par);
     },
     processQRCode(data) {
+      // This function is called every time the scanner recognises a QR code
+      // check if the QR code text is longer than 4096 characters
       if (data.data.length > 4096) {
         this.TMA.showAlert('Error cannot store QR codes longer than 4096 characters');
         return;
       }
+      // avoids to scan the same code twice in continuous scan mode
+      if (data.data == this.last_code) {
+        return;
+      }
+      this.last_code = data.data;
       this.hapticImpact();
+      let key = this.addToStorage(data.data);
+      this.enrichValue(key);
+
+      // Отправка отсканированного QR-кода обратно в Telegram-бот
       this.TMA.sendData(data.data);
-      this.TMA.closeScanQrPopup();
-      this.TMA.close();
+
+      // Force to go back to the history screen if setting screen is open
+      this.show_history = true;
+      // Force to display the last element scanned
+      this.expanded_panels = [0];
+
+      if (!this.is_continuous_scan) {
+        this.TMA.closeScanQrPopup();
+        // Закрытие мини-приложения
+        this.TMA.close();
+      }
     },
     hapticImpact() {
       // makes the phone vibrate when QR is detected
