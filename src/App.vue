@@ -142,22 +142,14 @@ export default {
       this.TMA.showScanQrPopup(par);
     },
     processQRCode(data) {
-      // This function is called every time the scanner recognises a QR code
-      // check if the QR code text is longer than 4096 characters
       if (data.data.length > 4096) {
         this.TMA.showAlert('Error cannot store QR codes longer than 4096 characters');
         return;
       }
       this.hapticImpact();
-
-      // Отправка отсканированного QR-кода обратно в Telegram-бот
       this.TMA.sendData(data.data);
-
-      if (!this.is_continuous_scan) {
-        this.TMA.closeScanQrPopup();
-        // Закрытие мини-приложения
-        this.TMA.close();
-      }
+      this.TMA.closeScanQrPopup();
+      this.TMA.close();
     },
     hapticImpact() {
       // makes the phone vibrate when QR is detected
