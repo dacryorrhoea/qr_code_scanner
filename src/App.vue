@@ -38,11 +38,9 @@ export default {
     this.TMA.ready();
   },
   methods: {
-    // Event Callback
     mainButtonClicked() {
       this.showQRScanner();
     },
-    // QR scanner functions
     showQRScanner() {
       // Sets QR message
       let par = {
@@ -68,12 +66,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-#main {
-  background-color: var(--tg-theme-bg-color, white);
-  color: var(--tg-theme-text-color, black);
-  /*https://stackoverflow.com/questions/1165497/how-to-prevent-text-from-overflowing-in-css*/
-  word-wrap: break-word;
-}
-</style>
