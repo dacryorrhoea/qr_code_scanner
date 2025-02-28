@@ -61,26 +61,6 @@ export default {
     this.TMA.ready();
   },
   methods: {
-    removeKey(key) {
-      //TODO clean the enriched_values
-      for (var index = 0; index < this.cloud_storage_keys.length; index++) {
-        if (this.cloud_storage_keys[index] === key) {
-          this.cloud_storage_keys.splice(index, 1);
-          delete this.cloud_storage_values[key];
-          break;
-        }
-      }
-      this.TMA.CloudStorage.removeItem(key);
-    },
-    addToStorage(value) {
-      // generate a key based on the timestamp
-      const timestamp = new Date().getTime();
-      this.TMA.CloudStorage.setItem(timestamp, value);
-      // convert timestamp in string and add it to the array
-      this.cloud_storage_keys.unshift(timestamp.toString());
-      this.cloud_storage_values[timestamp] = value;
-      return timestamp;
-    },
     // Event Callback
     mainButtonClicked() {
       this.showQRScanner();
@@ -107,44 +87,6 @@ export default {
       // makes the phone vibrate when QR is detected
       this.TMA.HapticFeedback.impactOccurred("rigid");
       this.TMA.HapticFeedback.impactOccurred("heavy");
-    },
-    // Utils
-    formattedDate(timestamp) {
-      // Create a Date object from the timestamp
-      const date = new Date(parseInt(timestamp));
-
-      // Extract day, month, year, hour, and minute components
-      const day = date.getDate();
-      const month = date.getMonth() + 1; // Months are zero-based, so add 1
-      const year = date.getFullYear();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
-      const second = date.getSeconds();
-      // Format the date as "dd/mm/yyyy hh:mm:ss"
-      const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year} ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
-      return formattedDate;
-    },
-    getIconFromType(key) {
-      // check if key exists
-      if (!this.enriched_values[key]) {
-        return "mdi-text-box";
-      }
-      // check it key type exists
-      if (!this.enriched_values[key]['type']) {
-        return "mdi-text-box";
-      }
-      let type = this.enriched_values[key]['type'];
-      if (type == "geo") {
-        return "mdi-map-marker-outline";
-      } else if (type == "wifi") {
-        return "mdi-wifi";
-      } else if (type == "vcard") {
-        return "mdi-account";
-      } else if (type == "url") {
-        return "mdi-link";
-      } else {
-        return "mdi-text-box";
-      }
     },
     limitLength(value, max_length) {
       if (value.length <= max_length) {
