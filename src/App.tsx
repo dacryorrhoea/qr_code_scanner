@@ -13,7 +13,7 @@ function App() {
     const startScanning = async () => {
       try {
         // Проверяем доступность устройств камеры
-        const devices = await codeReader.listVideoDevices();
+        const devices = await codeReader.listVideoInputDevices(); // Используем правильный метод
         if (devices.length === 0) {
           throw new Error('No video devices found');
         }
