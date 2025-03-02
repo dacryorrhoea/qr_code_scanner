@@ -6,22 +6,13 @@
 <script>
 export default {
   created() {
-    this.TMA.MainButton.setText("Сканировать QR");
     this.TMA.onEvent('qrTextReceived', this.processQRCode);
-    this.TMA.onEvent('mainButtonClicked', this.mainButtonClicked);
   },
   mounted() {
     this.TMA.ready();
-    this.showQRScanner();
-    this.TMA.MainButton.show();
+    this.TMA.showScanQrPopup({text: ""});
   },
   methods: {
-    mainButtonClicked() {
-      this.showQRScanner();
-    },
-    showQRScanner() {
-      this.TMA.showScanQrPopup({text: ""});
-    },
     processQRCode(data) {
       // vibrate
       this.TMA.HapticFeedback.impactOccurred("rigid");
