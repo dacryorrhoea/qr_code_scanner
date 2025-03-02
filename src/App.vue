@@ -1,46 +1,47 @@
 <template>
   <div id="main">
-    <v-card v-if="is_telegram_client && is_telegram_api_updated" class="mx-auto" max-width="600">
-    </v-card>
-    <RequirementsMessage :is-telegram-client="is_telegram_client" :is-telegram-api-updated="is_telegram_api_updated" />
+    <!-- <v-card v-if="is_telegram_client && is_telegram_api_updated" class="mx-auto" max-width="600">
+    </v-card> -->
+    <!-- <RequirementsMessage :is-telegram-client="is_telegram_client" :is-telegram-api-updated="is_telegram_api_updated" /> -->
   </div>
 </template>
 
 <script>
-import RequirementsMessage from './components/RequirementsMessage.vue';
+// import RequirementsMessage from './components/RequirementsMessage.vue';
 
 export default {
   components: {
-    RequirementsMessage
+    // RequirementsMessage
   },
   data() {
     return {
-      is_telegram_client: false,
-      is_telegram_api_updated: false,
+      // is_telegram_client: false,
+      // is_telegram_api_updated: false,
     };
   },
   created() {
     // Binding function to the events types
-    this.TMA.MainButton.setText("Scan QR code");
+    this.TMA.MainButton.setText("Сканировать QR");
     this.TMA.onEvent('qrTextReceived', this.processQRCode);
     this.TMA.onEvent('mainButtonClicked', this.mainButtonClicked);
 
     // platform not updated if version is not 6.9 or greater
-    this.is_telegram_api_updated = this.TMA.isVersionAtLeast('6.9');
-    if (this.TMA.platform != "unknown") {
-      this.is_telegram_client = true;
-    }
+    // this.is_telegram_api_updated = this.TMA.isVersionAtLeast('6.9');
+    // if (this.TMA.platform != "unknown") {
+    //   this.is_telegram_client = true;
+    // }
   
-    if (this.is_telegram_client && this.is_telegram_api_updated) {
-      this.TMA.MainButton.show();
-    }
+    // if (this.is_telegram_client && this.is_telegram_api_updated) {
+    //   this.TMA.MainButton.show();
+    // }
   },
   mounted() {
     this.TMA.ready();
-
-    if (this.is_telegram_client && this.is_telegram_api_updated) {
-      this.showQRScanner();
-    }
+    this.showQRScanner();
+    this.TMA.MainButton.show();
+    // if (this.is_telegram_client && this.is_telegram_api_updated) {
+    //   this.showQRScanner();
+    // }
   },
   methods: {
     mainButtonClicked() {
