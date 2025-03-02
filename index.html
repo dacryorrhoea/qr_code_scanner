@@ -2,20 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Scan QR code</title>
+  <title></title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    const tg = window.Telegram.WebApp;
+    const TPA = window.Telegram.WebApp;
 
-    tg.showScanQrPopup({ text: '' }, qrCallBack);
+    TPA.showScanQrPopup({ text: '' }, (data) => {
+      TPA.sendData(data);
+      return true;
+    });
 
-    function qrCallBack(data) {
-      tg.sendData(data);
-    }
-
-    // Обработчик закрытия окна сканера
-    tg.onEvent("scanQrPopupClosed", () => {
-      tg.close(); // Закрываем приложение
+    TPA.onEvent("scanQrPopupClosed", () => {
+      TPA.close();
     });
   </script>
 </head>
