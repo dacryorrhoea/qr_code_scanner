@@ -5,11 +5,19 @@
   <title>Scan QR code</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    window.Telegram.WebApp.showScanQrPopup({text: 'Сканируй qr!'}, qrCallBack);
+    const tg = window.Telegram.WebApp;
+
+    tg.showScanQrPopup({ text: '' }, qrCallBack);
+
     function qrCallBack(data) {
-      window.Telegram.WebApp.sendData(data);
+      tg.sendData(data);
       return true;
     }
+
+    // Обработчик закрытия сканера без сканирования
+    tg.onEvent("popup_closed", () => {
+      tg.close(); // Закрываем веб-приложение
+    });
   </script>
 </head>
 <body>
