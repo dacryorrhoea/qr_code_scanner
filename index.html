@@ -11,12 +11,11 @@
 
     function qrCallBack(data) {
       tg.sendData(data);
-      return true;
     }
 
-    // Обработчик закрытия сканера без сканирования
-    tg.onEvent("popup_closed", () => {
-      tg.close(); // Закрываем веб-приложение
+    // Обработчик закрытия окна сканера
+    tg.onEvent("scanQrPopupClosed", () => {
+      tg.close(); // Закрываем приложение
     });
   </script>
 </head>
